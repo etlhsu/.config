@@ -10,6 +10,7 @@ cd ~/.config
 jj git init
 jj git remote add origin https://github.com/etlhsu/.config.git
 jj git fetch
+jj rebase -o main@origin
 ```
 
 3. Set up Zsh, then restart your terminal:
