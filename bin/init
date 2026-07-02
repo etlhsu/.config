@@ -10,7 +10,8 @@ if ! exists brew; then
 fi
 if exists brew; then
   echo "Installing Homebrew packages"
-  brew install fzf exercism neovim ranger ripgrep tmux
+  brew install bash-language-server fzf exercism lua-language-server neovim ranger ripgrep \
+tree-sitter-cli tmux JetBrains/utils/kotlin-lsp
 fi
 
 if exists kotlin; then

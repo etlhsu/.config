@@ -17,11 +17,15 @@ vim.keymap.set("n", "<leader>yd", function()
   vim.fn.setreg("\"", dirname)
 end)
 
+-- Starts substitution command for replacing the current word
+vim.keymap.set('n', '<leader>gr', function()
+  vim.api.nvim_feedkeys(':%s/' .. vim.fn.expand('<cword>') .. '/', 'n', {})
+end)
+
 -- Telescope keymaps
 local hasTelescope = pcall(require, 'telescope')
 if hasTelescope then
   local builtin = require('telescope.builtin')
-  local utils = require('telescope.utils')
 
   vim.keymap.set('n', '<C-p>', builtin.find_files)
   vim.keymap.set('n', '<leader>ff',
@@ -32,7 +36,7 @@ if hasTelescope then
   vim.keymap.set('n', '<leader>bf', builtin.buffers)
   vim.keymap.set('n', '<leader>bs', function()
     local results = {}
-    for _, v in pairs(get_open_filelist(true, vim.loop.cwd())) do
+    for _, v in pairs(Get_open_files(true, vim.loop.cwd())) do
       if vim.fn.isdirectory(v) == 0 then
         table.insert(results, v)
       end
@@ -41,10 +45,10 @@ if hasTelescope then
   end)
 
   vim.keymap.set('n', '<leader>df', function()
-    builtin.find_files({ search_dirs = { vim.fn.expand('%:h') } })
+    builtin.find_files({ search_dirs = { Get_current_buf_dir() } })
   end)
   vim.keymap.set('n', '<leader>ds', function()
-    builtin.live_grep({ search_dirs = { vim.fn.expand('%:h') } })
+    builtin.live_grep({ search_dirs = { Get_current_buf_dir() } })
   end)
 
   vim.keymap.set('n', '<leader>hs', builtin.help_tags)
@@ -62,43 +66,12 @@ if hasTelescope then
 
   vim.keymap.set('n', '<leader>te', builtin.resume)
 
-  local function get_git_files(rev)
-    local handle = io.popen("cd " .. vim.loop.cwd() .. "&& git rev-parse --show-toplevel")
-    if handle == nil then
-      error("Could not read handle")
-    end
-    local root = handle:read("*a")
-    root = root:sub(1, -2) .. "/"
-    handle:close()
-
-    local files = {}
-    for _, file in pairs(utils.get_os_command_output({ "git", "diff", rev, "--name-only", }, root)) do
-      table.insert(files, root .. file)
-    end
-    for _, file in pairs(utils.get_os_command_output({ "git", "ls-files", "--others", "--exclude-standard", }, root)) do
-      table.insert(files, root .. file)
-    end
-
-    for _, v in pairs(files) do
-      print(v)
-    end
-    return files
-  end
-
   vim.keymap.set('n', '<leader>vf', function()
-    builtin.find_files({ search_dirs = get_git_files("HEAD~1") })
+    builtin.find_files({ search_dirs = Get_jj_files("@") })
   end
   )
   vim.keymap.set('n', '<leader>vs', function()
-    builtin.live_grep({ search_dirs = get_git_files("HEAD~1") })
-  end
-  )
-  vim.keymap.set('n', '<leader>vaf', function()
-    builtin.find_files({ search_dirs = get_git_files("HEAD~3") })
-  end
-  )
-  vim.keymap.set('n', '<leader>vas', function()
-    builtin.live_grep({ search_dirs = get_git_files("HEAD~3") })
+    builtin.live_grep({ search_dirs = Get_jj_files("@") })
   end
   )
 end
@@ -114,3 +87,9 @@ vim.keymap.set('n', '<leader>lh', vim.lsp.buf.signature_help)
 vim.keymap.set('n', '<leader>lf', vim.lsp.buf.format)
 vim.keymap.set('n', '<leader>ld', vim.lsp.buf.definition)
 vim.keymap.set('n', '<leader>K', function() vim.diagnostic.open_float() end)
+
+-- Abbreviations
+vim.keymap.set('ia', 'uenv', '#!/usr/bin/env')
+vim.keymap.set('ia', 'ktci', 'kotlinx.coroutines')
+vim.keymap.set('ia', 'moci', 'org.mockito.kotlin.')
+vim.keymap.set('ia', 'comi', 'androidx.compose.')

@@ -8,10 +8,9 @@ vim.api.nvim_create_autocmd({ "BufLeave" }, {
   end,
 })
 
--- Show LSP completion
--- vim.api.nvim_create_autocmd('LspAttach', {
---   callback = function(ev)
---     -- Enable completion provided by the language server
---     vim.lsp.completion.enable(true, ev.data.client_id, ev.buf, { autotrigger = true })
---   end,
--- })
+vim.api.nvim_create_autocmd("BufEnter", {
+    group = vim.api.nvim_create_augroup("autocompletion-sanitizer", { clear = true }),
+    callback = function(ev)
+        if vim.bo[ev.buf].buftype ~= "" then vim.bo[ev.buf].autocomplete = false end
+    end,
+})
