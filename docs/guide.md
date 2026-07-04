@@ -6,6 +6,7 @@
 - `| grep -o matchstring` - returns *o*nly matched parts from piped-in input
 - `| xargs sed -i 's/string1/string2/g'` - Performs find and replace on piped-in files
 - `sed 'x!d' file` - Returns line x of a file
+- `curl -LO https://example.com` - Download web content
 
 ### Tmux
 `Ctrl+B` is the prefix key which can be combined with other keys to perform actions:

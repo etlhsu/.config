@@ -22,10 +22,7 @@ vim.cmd([[ au filetype netrw map <buffer> L <CR><C-R>=vim.g.netrw_preview| ]])
 
 -- Install plugins
 vim.pack.add({
-  'https://github.com/nvim-telescope/telescope.nvim',
-  'https://github.com/nvim-lua/plenary.nvim',
   'https://github.com/nvim-treesitter/nvim-treesitter.git',
-  'https://github.com/nvim-mini/mini.nvim.git',
 })
 
 -- Telescope
@@ -42,4 +39,3 @@ end
 -- Treesitter
 require('nvim-treesitter').install { 'astro', 'bash', 'c', 'css', 'go', 'html', 'java', 'kotlin',
   'lua', 'markdown', 'markdown_inline', 'proto', 'tsx', 'typescript', 'vim', 'vimdoc' }
--- require('mini.completion').setup({})

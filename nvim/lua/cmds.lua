@@ -47,3 +47,7 @@ vim.api.nvim_create_user_command('Mv', function(opts)
   os.remove(oldfile)
   vim.api.nvim_buf_delete(vim.fn.bufnr(old_bufname), {})
 end, { complete = 'file', nargs = 1 })
+
+vim.api.nvim_create_user_command('Wso', function(opts)
+  vim.cmd('write | source')
+end, {})
