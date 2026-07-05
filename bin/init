@@ -1,29 +1,23 @@
-#!/usr/bin/env bash
-
+#!/usr/bin/env sh
 function exists() {
   command -v "$1" >/dev/null 2>&1
 }
+function install_cmd() {
+  if exists $1; then
+    echo "$1 is already installed"
+  else
+    echo "Installing $1"
+    echo "$2" | sh
+  fi
+}
 
-if ! exists brew; then
-  echo "Installing Homebrew"
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-fi
+install_cmd "brew" '/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"'
+install_cmd "kotlin" 'curl -fsSL https://kotl.in/install.sh | sh'
+install_cmd "rustup" 'curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh'
+install_cmd "pnpm" 'wget -qO- https://get.pnpm.io/install.sh | sh -'
+
 if exists brew; then
   echo "Installing Homebrew packages"
-  brew install bash-language-server fzf exercism lua-language-server neovim ranger ripgrep \
-tree-sitter-cli tmux JetBrains/utils/kotlin-lsp
-fi
-
-if exists kotlin; then
-  echo "Kotlin is already installed"
-else 
-  echo "Installing Kotlin"
-  curl -fsSL https://kotl.in/install.sh | sh
-fi
-
-if exists rustup; then
-  echo "Rust is already installed"
-else
-  echo "Installing Rust"
-  curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+  brew install bash-language-server fzf exercism lua-language-server neovim pnpm ranger ripgrep \
+tree-sitter-cli tmux zig JetBrains/utils/kotlin-lsp
 fi

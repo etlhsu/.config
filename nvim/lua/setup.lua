@@ -21,20 +21,7 @@ vim.cmd([[ au filetype netrw map <buffer> h -^| map <buffer> l <CR>| map <buffer
 vim.cmd([[ au filetype netrw map <buffer> L <CR><C-R>=vim.g.netrw_preview| ]])
 
 -- Install plugins
-vim.pack.add({
-  'https://github.com/nvim-treesitter/nvim-treesitter.git',
-})
-
--- Telescope
-local hasTelescope, telescope = pcall(require, 'telescope')
-if hasTelescope then
-  telescope.setup({
-    defaults = {
-      sorting_strategy = 'ascending',
-      layout_strategy = 'center',
-    }
-  })
-end
+vim.pack.add({'https://github.com/nvim-treesitter/nvim-treesitter.git'})
 
 -- Treesitter
 require('nvim-treesitter').install { 'astro', 'bash', 'c', 'css', 'go', 'html', 'java', 'kotlin',
