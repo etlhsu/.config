@@ -46,7 +46,9 @@ Set_fzf_dir_keymap("<leader>df", function() return Get_current_buf_dir() end,
   function(selection) vim.cmd("edit " .. Get_current_buf_dir() .. "/" .. selection) end
 )
 Set_fzf_files_keymap("<leader>of", Get_oldfiles)
-Set_fzf_files_keymap("<leader>vf", function() return Get_jj_files("@") end)
+Set_fzf_files_keymap("<leader>vf", function() return Get_jj_files("@--..@") end)
+Set_fzf_files_keymap("<leader>vdf", function() return Get_jj_files("@") end)
+Set_fzf_files_keymap("<leader>vaf", function() return Get_jj_files("immutable()..@") end)
 
 Set_rg_fzf_files_keymap("<leader>bs", Get_open_files)
 Set_rg_fzf_dir_keymap("<leader>fs", function() return vim.loop.cwd() end)
@@ -57,3 +59,5 @@ Set_rg_fzf_dir_keymap("<leader>ds", function() return Get_current_buf_dir() end,
 )
 Set_rg_fzf_files_keymap("<leader>os", Get_oldfiles)
 Set_rg_fzf_files_keymap("<leader>vs", function() return Get_jj_files("@") end)
+Set_rg_fzf_files_keymap("<leader>vds", function() return Get_jj_files("@") end)
+Set_rg_fzf_files_keymap("<leader>vas", function() return Get_jj_files("immutable()..@") end)

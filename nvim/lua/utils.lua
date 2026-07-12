@@ -32,7 +32,7 @@ end
 function Get_jj_files(rev)
   local files = {}
 
-  local handle = io.popen("jj diff --summary -r " .. rev)
+  local handle = io.popen("jj diff --summary -r " .. "\"" .. rev .. "\"")
   if not handle then
     error("Command did not execute successfully")
   end
@@ -136,12 +136,12 @@ local function set_rg_fzf_keymap(lhs, create_rg_cmd, on_select)
 end
 
 function Set_fzf_dir_keymap(lhs, create_dir, on_select)
-  set_fzf_keymap(lhs, function() return 'cd ' .. create_dir() .. ' && fzf --reverse --preview=\'cat {}\'' end, on_select)
+  set_fzf_keymap(lhs, function() return 'cd ' .. create_dir() .. ' && fzf --reverse' end, on_select)
 end
 
 function Set_fzf_files_keymap(lhs, create_files, on_select)
   set_fzf_keymap(lhs, function()
-    return 'echo \"' .. table.concat(create_files(), '\n') .. '\" | fzf --reverse --preview=\'cat {}\''
+    return 'echo \"' .. table.concat(create_files(), '\n') .. '\" | fzf --reverse'
   end, on_select)
 end
 
