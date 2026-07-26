@@ -160,3 +160,20 @@ function Set_rg_fzf_files_keymap(lhs, create_files, on_select)
   fzf --reverse --ansi --color "hl:-1:underline,hl+:-1:underline:reverse" --delimiter : ]]
   end, on_select)
 end
+
+function Fetch_jj_content(rev, relative_path)
+  local cmd = { "jj", "file", "show", "-r", rev , relative_path }
+  local result = vim.system(cmd, { text = true }):wait()
+
+  print(result.code)
+  if result.code ~= 0 then
+    vim.notify("jj error: " .. (result.stderr or "Failed to run jj command"), vim.log.levels.ERROR)
+    return nil
+  end
+
+
+  local split_lines = vim.split(result.stdout or "", "\n", { trimempty = false })
+  -- Remove the last line which is a newline separator
+  table.remove(split_lines)
+  return split_lines
+end

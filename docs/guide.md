@@ -52,3 +52,14 @@ select out in a b c d; do
   break # If single shot
 done
 ```
+
+### Jujutsu
+- `jj git init` - set up a new repository
+- `jj git remote add origin {url}` - add a remote repository
+- `jj bookmark create main -r @-` - create a bookmark at a revision
+- `jj bookmark track main --remote=origin` - track a remote branch as a bookmark
+- `jj commit -m ''` - make a commit
+- `jj bookmark move main --to @-` - move the `main` bookmark to a revision
+- `jj git push --bookmark main --remote origin` - push to a remote repository
+- `jj git fetch` - fetch Git remote changes`
+- `jj rebase -o main@origin` - rebase current commit onto bookmark

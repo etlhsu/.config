@@ -3,7 +3,7 @@ vim.api.nvim_create_autocmd({ "BufLeave", "FocusLost" }, {
   callback = function()
     -- Only save if the buffer is modifiable, has a name, and is modified
     if not vim.bo.readonly and vim.bo.modified and vim.fn.expand("%") ~= "" then
-      vim.cmd("update")
+      vim.cmd("silent update")
     end
   end,
 })
