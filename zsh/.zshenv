@@ -25,3 +25,8 @@ path+="$HOME/.config/bin"
 
 bindkey -M viins '^?' backward-delete-char
 bindkey -M viins '^H' backward-delete-char
+
+jjae() {
+  jj abandon 'empty() & description(exact:"") ~ merges()'
+}
+
