@@ -63,3 +63,8 @@ done
 - `jj git push --bookmark main --remote origin` - push to a remote repository
 - `jj git fetch` - fetch Git remote changes`
 - `jj rebase -o main@origin` - rebase current commit onto bookmark
+
+- `jj rebase -s <rev> -o <rev>` - rebase a source revision onto a revision
+- `jj duplicate <rev>` - duplicate a revset
+- `jj squash -f <rev>` - squash a revset
+- `jj restore --from <rev> <filesets>` reverts a fileset to a revision

@@ -7,14 +7,14 @@ vim.keymap.set('n', '<leader>gi', '?^import.*\\n.*\\n<CR>:noh<CR>')
 -- Yanks file path of current buffer
 vim.keymap.set("n", "<leader>yf", function()
   local filename = vim.fn.expand("%")
-  vim.fn.setreg("\"", filename)
+  vim.fn.setreg("+", filename)
 end)
 
 -- Yanks directory path of current buffer
 vim.keymap.set("n", "<leader>yd", function()
   local filename = vim.fn.expand("%")
   local dirname = vim.fs.dirname(filename)
-  vim.fn.setreg("\"", dirname)
+  vim.fn.setreg("+", dirname)
 end)
 
 -- Starts substitution command for replacing the current word
@@ -35,6 +35,7 @@ vim.keymap.set('n', '<leader>ld', vim.lsp.buf.definition)
 vim.keymap.set('n', '<leader>K', function() vim.diagnostic.open_float() end)
 
 -- Abbreviations
+vim.keymap.set('ia', 'binb', '#!/bin/bash')
 vim.keymap.set('ia', 'uenv', '#!/usr/bin/env')
 vim.keymap.set('ia', 'ktci', 'kotlinx.coroutines')
 vim.keymap.set('ia', 'moci', 'org.mockito.kotlin.')

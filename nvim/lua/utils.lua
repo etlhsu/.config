@@ -59,11 +59,19 @@ function Get_jj_files(rev)
   return files
 end
 
+function Create_relative_path(absolute_path)
+  local cwd = vim.fn.getcwd() .. "/"
+  if absolute_path:sub(1, #cwd) == cwd then
+    return absolute_path:sub(#cwd + 1)
+  end
+  return absolute_path
+end
+
 function Get_oldfiles()
   local oldfiles = {}
   for _, file in ipairs(vim.v.oldfiles) do
     if vim.fn.filereadable(file) == 1 then
-      table.insert(oldfiles, file)
+      table.insert(oldfiles, Create_relative_path(file))
     end
   end
   table.sort(oldfiles, function(a, b)
@@ -99,7 +107,7 @@ local function open_fzf_float(fzf_cmd, on_select)
         end
 
         if exit_code == 0 then
-          local line = vim.api.nvim_buf_get_lines(buf, 0, -1, false)[1]
+          local line = table.concat(vim.api.nvim_buf_get_lines(buf, 0, -1, false), '')
           if on_select == nil then
             vim.cmd("edit " .. line)
           else
@@ -162,18 +170,41 @@ function Set_rg_fzf_files_keymap(lhs, create_files, on_select)
 end
 
 function Fetch_jj_content(rev, relative_path)
-  local cmd = { "jj", "file", "show", "-r", rev , relative_path }
+  local cmd = { "jj", "file", "show", "-r", rev, relative_path }
   local result = vim.system(cmd, { text = true }):wait()
 
-  print(result.code)
   if result.code ~= 0 then
-    vim.notify("jj error: " .. (result.stderr or "Failed to run jj command"), vim.log.levels.ERROR)
-    return nil
+    return nil, result.stderr
   end
-
 
   local split_lines = vim.split(result.stdout or "", "\n", { trimempty = false })
   -- Remove the last line which is a newline separator
   table.remove(split_lines)
-  return split_lines
+  return split_lines, nil
+end
+
+function Get_jj_root()
+  local result = vim.system({ 'jj', 'root' }, { text = true }):wait()
+
+  if result.code ~= 0 then
+    vim.notify("Error when running jj root: " .. result.stderr, vim.log.levels.ERROR)
+    return nil
+  end
+
+  -- Remove the last character which is a newline separator
+  return string.sub(result.stdout, 1, -2)
+end
+
+function Create_jj_summary(rev)
+  local cmd = { "jj", "diff", "-r", rev, "--summary" }
+  local result = vim.system(cmd, { text = true }):wait()
+
+  if result.code ~= 0 then
+    return nil, result.stderr
+  end
+
+  local split_lines = vim.split(result.stdout or "", "\n", { trimempty = false })
+  -- Remove the last line which is a newline separator
+  table.remove(split_lines)
+  return split_lines, nil
 end

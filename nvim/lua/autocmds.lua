@@ -1,5 +1,6 @@
 -- Save when switching buffers, windows, or leaving Neovim
 vim.api.nvim_create_autocmd({ "BufLeave", "FocusLost" }, {
+  group = vim.api.nvim_create_augroup('AutoWriteChange', { clear = true }),
   callback = function()
     -- Only save if the buffer is modifiable, has a name, and is modified
     if not vim.bo.readonly and vim.bo.modified and vim.fn.expand("%") ~= "" then
