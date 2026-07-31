@@ -67,19 +67,21 @@ function Create_relative_path(absolute_path)
   return absolute_path
 end
 
-function Get_oldfiles()
+function Get_oldfiles(check_files)
   local oldfiles = {}
   for _, file in ipairs(vim.v.oldfiles) do
-    if vim.fn.filereadable(file) == 1 then
+    if not checkfiles or vim.fn.filereadable(file) == 1 then
       table.insert(oldfiles, Create_relative_path(file))
     end
   end
-  table.sort(oldfiles, function(a, b)
-    local time_a = vim.fn.getftime(a)
-    local time_b = vim.fn.getftime(b)
+  if check_files then
+    table.sort(oldfiles, function(a, b)
+      local time_a = vim.fn.getftime(a)
+      local time_b = vim.fn.getftime(b)
 
-    return time_a > time_b
-  end)
+      return time_a > time_b
+    end)
+  end
   return oldfiles
 end
 
