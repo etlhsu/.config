@@ -70,14 +70,14 @@ end
 function Get_oldfiles(check_files)
   local oldfiles = {}
   for _, file in ipairs(vim.v.oldfiles) do
-    if not checkfiles or vim.fn.filereadable(file) == 1 then
+    if not check_files or vim.fn.filereadable(file) == 1 then
       table.insert(oldfiles, Create_relative_path(file))
     end
   end
   if check_files then
     table.sort(oldfiles, function(a, b)
-      local time_a = vim.fn.getftime(a)
-      local time_b = vim.fn.getftime(b)
+      local time_a = vim.uv.fs_stat(a).mtime.sec
+      local time_b = vim.uv.fs_stat(b).mtime.sec
 
       return time_a > time_b
     end)
@@ -209,4 +209,70 @@ function Create_jj_summary(rev)
   -- Remove the last line which is a newline separator
   table.remove(split_lines)
   return split_lines, nil
+end
+
+function Get_jj_file_list(rev)
+  local cmd = { "jj", "file", "list", "-r", rev }
+  local result = vim.system(cmd, { text = true }):wait()
+
+  if result.code ~= 0 then
+    vim.notify("Error when running jj file list: " .. result.stderr, vim.log.levels.ERROR)
+    return nil
+  end
+
+  local split_lines = vim.split(result.stdout or "", "\n", { trimempty = false })
+  -- Remove the last line which is a newline separator
+  table.remove(split_lines)
+  return split_lines
+end
+
+local candidates = {}
+function Set_complete_file_keymap(lhs, cmd, create_candidates, opts)
+  local select_cmd = opts.cmd
+  vim.api.nvim_create_user_command(cmd, function(opts)
+    local input = opts.args
+
+    -- Set the file to be the first matching candidate
+    local file = input
+    for _, candidate in ipairs(candidates[cmd]) do
+      if string.find(candidate:lower(), input:lower()) ~= nil then
+        file = candidate
+        break
+      end
+    end
+
+    if select_cmd == nil then
+      vim.cmd('edit ' .. file)
+    else
+      select_cmd(file)
+    end
+  end, {
+    nargs = '?',
+    complete = function(arg_lead, _, _)
+      return vim.tbl_filter(
+        function(item)
+          return string.find(item:lower(), arg_lead:lower()) ~= nil
+        end, candidates[cmd])
+    end
+  })
+
+  vim.keymap.set('n', lhs, function()
+    candidates[cmd] = create_candidates()
+    vim.api.nvim_feedkeys(':' .. cmd .. ' ', 'n', false)
+  end)
+end
+
+function Get_files_recursive(dir)
+  local files = {}
+  -- Runs shell command to find only files (-type f)
+  local handle = io.popen('find "' .. dir .. '" -type f')
+
+  if handle then
+    for line in handle:lines() do
+      table.insert(files, line)
+    end
+    handle:close()
+  end
+
+  return files
 end

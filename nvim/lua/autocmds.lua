@@ -32,3 +32,11 @@ vim.api.nvim_create_autocmd("BufReadPost", {
     end
   end,
 })
+
+vim.api.nvim_create_autocmd("CmdlineChanged", {
+  group = vim.api.nvim_create_augroup('CmdlineAutocompletion', {}),
+  pattern = { ":", "/", "%?" },
+  callback = function()
+    vim.fn.wildtrigger()
+  end,
+})

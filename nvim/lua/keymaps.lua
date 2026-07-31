@@ -41,15 +41,30 @@ vim.keymap.set('ia', 'ktci', 'kotlinx.coroutines')
 vim.keymap.set('ia', 'moci', 'org.mockito.kotlin.')
 vim.keymap.set('ia', 'comi', 'androidx.compose.')
 
-Set_fzf_files_keymap("<leader>bf", Get_open_files)
-Set_fzf_dir_keymap("<leader>ff", function() return vim.loop.cwd() end)
-Set_fzf_dir_keymap("<leader>df", function() return Get_current_buf_dir() end,
-  function(selection) vim.cmd("edit " .. Get_current_buf_dir() .. "/" .. selection) end
+vim.keymap.set('n', '<leader>bb', function() vim.api.nvim_feedkeys(':b ', 'n', false) end)
+Set_complete_file_keymap('<leader>bf', 'Eb', Get_open_files, {})
+Set_complete_file_keymap('<leader>jf', 'Ej', function() return Get_jj_file_list('@') end, {})
+Set_complete_file_keymap('<leader>of', 'Eo', function() return Get_oldfiles(true) end, {})
+Set_complete_file_keymap("<leader>vf", 'Ev', function() return Get_jj_files("@--..@") end, {})
+Set_complete_file_keymap("<leader>vdf", 'Evd', function() return Get_jj_files("@") end, {})
+Set_complete_file_keymap("<leader>vaf", 'Evaf',
+  function() return Get_jj_files("immutable()..@") end, {}
 )
-Set_fzf_files_keymap("<leader>of", function() return Get_oldfiles(true) end)
-Set_fzf_files_keymap("<leader>vf", function() return Get_jj_files("@--..@") end)
-Set_fzf_files_keymap("<leader>vdf", function() return Get_jj_files("@") end)
-Set_fzf_files_keymap("<leader>vaf", function() return Get_jj_files("immutable()..@") end)
+Set_complete_file_keymap("<leader>ff", 'Ef',
+  function() return Get_files_recursive(vim.loop.cwd()) end, {}
+)
+Set_complete_file_keymap("<leader>df", 'Ed',
+  function()
+    local dir = Get_current_buf_dir()
+    local files = Get_files_recursive(dir)
+    for i = 1, #files do
+      files[i] = files[i]:sub(#dir + 2)
+    end
+    return files
+  end,
+  {
+    cmd = function(selection) vim.cmd("edit " .. Get_current_buf_dir() .. "/" .. selection) end
+  })
 
 Set_rg_fzf_files_keymap("<leader>bs", Get_open_files)
 Set_rg_fzf_dir_keymap("<leader>fs", function() return vim.loop.cwd() end)
