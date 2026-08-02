@@ -1,9 +1,9 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 function exists() {
   command -v "$1" >/dev/null 2>&1
 }
 function install_cmd() {
-  if exists $1; then
+  if exists "$1"; then
     echo "$1 is already installed"
   else
     echo "Installing $1"
@@ -19,5 +19,5 @@ install_cmd "pnpm" 'wget -qO- https://get.pnpm.io/install.sh | sh -'
 if exists brew; then
   echo "Installing Homebrew packages"
   brew install bash-language-server fzf exercism lua-language-server neovim pnpm ranger ripgrep \
-tree-sitter-cli tmux zig JetBrains/utils/kotlin-lsp
+    shellcheck tree-sitter-cli tmux zig JetBrains/utils/kotlin-lsp
 fi

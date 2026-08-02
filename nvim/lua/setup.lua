@@ -8,6 +8,7 @@ vim.o.autoread = true
 vim.o.autowriteall = true
 vim.o.clipboard = "unnamedplus" -- Copies to clipboard, use standard paste for pasting
 vim.o.colorcolumn = '100'
+vim.o.complete = 'o,.,]'
 vim.o.completeopt = 'fuzzy,menu,menuone,noinsert,noselect,popup,preview'
 vim.o.fillchars = "stl:-,stlnc:-"
 vim.o.gdefault = true
@@ -20,6 +21,8 @@ vim.o.splitbelow = true
 vim.o.swapfile = false
 vim.o.undofile = true
 vim.o.wildmode = "noselect:lastused"
+vim.o.updatetime = 250
+
 vim.cmd.colorscheme('retrobox')
 
 -- Navigate netrw like ranger

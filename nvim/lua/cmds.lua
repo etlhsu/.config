@@ -48,7 +48,7 @@ vim.api.nvim_create_user_command('Mv', function(opts)
   vim.api.nvim_buf_delete(vim.fn.bufnr(old_bufname), {})
 end, { complete = 'file', nargs = 1 })
 
-vim.api.nvim_create_user_command('Wso', function(opts)
+vim.api.nvim_create_user_command('Wso', function()
   vim.cmd('write | source')
 end, {})
 
@@ -179,3 +179,23 @@ vim.api.nvim_create_user_command('Cjj', function(opts)
   })
   vim.cmd('copen')
 end, { nargs = "?" })
+
+vim.api.nvim_create_user_command('Messages', function()
+  vim.cmd("enew")
+  local buf = vim.api.nvim_get_current_buf()
+
+  local messages = vim.fn.execute('messages')
+  local lines = vim.split(messages, '\n', { plain = true })
+  table.remove(lines, 1)
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
+
+  vim.bo[buf].buftype = "nofile"
+  vim.bo[buf].bufhidden = "hide"
+  vim.bo[buf].modifiable = false
+  vim.bo[buf].readonly = true
+end, {})
+
+vim.api.nvim_create_user_command('Cdiagnostic', function()
+  vim.diagnostic.setqflist()
+  vim.cmd('copen')
+end, {})
