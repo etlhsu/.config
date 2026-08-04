@@ -15,7 +15,7 @@ jj rebase -o main@origin
 
 3. Set up Zsh, then restart your terminal:
 ```shell
-echo "source ~/.config/zsh/.zshenv" >> ~/.zshenv
+echo "source ~/.config/zsh/.zshrc" >> ~/.zshrc
 ```
 
 4. Run the init script:

@@ -1,7 +1,7 @@
 -- From https://github.com/neovim/nvim-lspconfig
 vim.lsp.config['bashls'] = {
   cmd = { 'bash-language-server', 'start' },
-  filetypes = { 'bash', 'sh' },
+  filetypes = { 'bash', 'sh', 'zsh' },
 }
 vim.lsp.config['kotlin_lsp'] = {
   filetypes = { 'kotlin' },

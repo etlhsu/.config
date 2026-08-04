@@ -199,3 +199,15 @@ vim.api.nvim_create_user_command('Cdiagnostic', function()
   vim.diagnostic.setqflist()
   vim.cmd('copen')
 end, {})
+
+vim.api.nvim_create_user_command('Rust', function()
+  vim.cmd("'<,'>w !code-run -l rs")
+end, { range = true })
+
+vim.api.nvim_create_user_command('Kotlin', function()
+  vim.cmd("'<,'>w !code-run -l kt")
+end, { range = true })
+
+vim.api.nvim_create_user_command('TypeScript', function()
+  vim.cmd("'<,'>w !code-run -l ts")
+end, { range = true })

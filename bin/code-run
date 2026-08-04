@@ -1,0 +1,75 @@
+#!/bin/bash
+set -e
+
+readonly DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/code-run"
+
+while [[ "$#" -gt 0 ]]; do
+  case "$1" in
+  -l | --language)
+    OPTION_LANGUAGE="$2"
+    shift
+    shift
+    ;;
+
+  -*)
+    echo "Error: unknown option $1"
+    exit 1
+    ;;
+
+  *)
+    POSITIONAL_ARGS+=("$1") # save positional arg
+    shift                   # past argument
+    ;;
+  esac
+done
+
+if [[ -z "$OPTION_LANGUAGE" ]]; then
+  echo "Error: must specify language with -l"
+  exit 1
+fi
+
+code="${POSITIONAL_ARGS[@]}"
+if [[ -z "$code" ]]; then
+  code="$(</dev/stdin)"
+fi
+
+case "$OPTION_LANGUAGE" in
+rs)
+  mkdir -p "$DATA_HOME/rust"
+  cd "$DATA_HOME/rust"
+
+  echo "\
+fn main() {
+$code
+}" >main.rs
+  rustc main.rs
+  ./main
+  ;;
+
+kt)
+  if [[ -d "$DATA_HOME/kotlin" ]]; then
+    cd "$DATA_HOME/kotlin"
+  else
+    mkdir -p "$DATA_HOME/kotlin"
+    cd "$DATA_HOME/kotlin"
+    gradle init --type kotlin-application --use-defaults --console=plain -q
+  fi
+
+  echo "\
+package org.example
+fun main() {
+$code
+}" >app/src/main/kotlin/org/example/App.kt
+
+  gradle run --console=plain -q
+  ;;
+
+ts)
+  echo "$code" | tsx
+  ;;
+
+*)
+  echo "Error: unknown language $OPTION_LANGUAGE"
+  exit 1
+  ;;
+esac
