@@ -8,28 +8,25 @@ export PATH="$HOME/.config/bin:$PATH"
 bindkey -M viins '^?' backward-delete-char
 bindkey -M viins '^H' backward-delete-char
 
+alias jjae="jj abandon 'empty() & description(exact:\"\") ~ merges()"
+
 zle-keymap-select() {
   if [[ ${KEYMAP} == vicmd ]] ||
-     [[ $1 = 'block' ]]; then
+    [[ $1 = 'block' ]]; then
     echo -ne '\e[2 q'
 
   elif [[ ${KEYMAP} == main ]] ||
-       [[ ${KEYMAP} == viins ]] ||
-       [[ ${KEYMAP} = '' ]] ||
-       [[ $1 = 'beam' ]]; then
+    [[ ${KEYMAP} == viins ]] ||
+    [[ ${KEYMAP} = '' ]] ||
+    [[ $1 = 'beam' ]]; then
     echo -ne '\e[6 q'
   fi
 }
 
 mkcd() {
-  mkdir $1 && cd $1
+  mkdir "$1" && cd "$1"
 }
 
 precmd() {
-   echo -ne '\e[6 q'
+  echo -ne '\e[6 q'
 }
-
-jjae() {
-  jj abandon 'empty() & description(exact:"") ~ merges()'
-}
-
