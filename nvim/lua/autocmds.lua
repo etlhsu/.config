@@ -69,3 +69,19 @@ vim.api.nvim_create_autocmd('LspAttach', {
     end
   end,
 })
+
+-- Records file read to File_read_times
+vim.api.nvim_create_autocmd({ 'BufEnter' }, {
+  group = vim.api.nvim_create_augroup('RecordFileRead', {}),
+  callback = function()
+    local bufnr = vim.api.nvim_get_current_buf()
+    local ft = vim.api.nvim_get_option_value("ft", { buf = bufnr })
+    local bt = vim.api.nvim_get_option_value("bt", { buf = bufnr })
+
+    if ft ~= "netrw" and bt == '' then
+      local file = vim.api.nvim_buf_get_name(bufnr)
+      file = vim.fs.abspath(file)
+      File_read_times[file] = os.clock()
+    end
+  end,
+})

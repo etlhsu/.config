@@ -21,6 +21,7 @@ function Create_relative_path(absolute_path)
   return absolute_path
 end
 
+File_read_times = {}
 function Get_open_files()
   local bufnrs = vim.tbl_filter(function(b)
     return 1 == vim.fn.buflisted(b)
@@ -29,20 +30,33 @@ function Get_open_files()
     return
   end
 
+  local current_buf = vim.api.nvim_get_current_buf()
+
   local filelist = {}
   for _, bufnr in ipairs(bufnrs) do
     local file = vim.api.nvim_buf_get_name(bufnr)
+    file = vim.fs.abspath(file)
 
     local ft = vim.api.nvim_get_option_value("ft", { buf = bufnr })
     local bt = vim.api.nvim_get_option_value("bt", { buf = bufnr })
 
-    if ft == "netrw" or bt ~= "" then
-    else
-      local relative_path = Create_relative_path(file)
-      local shortened_path = Shorten_path(relative_path)
-      table.insert(filelist, shortened_path)
+    if ft ~= "netrw" and bt == '' and bufnr ~= current_buf then
+      table.insert(filelist, file)
     end
   end
+
+  table.sort(filelist, function(a, b)
+    local time_a = File_read_times[a] or 0
+    local time_b = File_read_times[b] or 0
+    return time_a > time_b
+  end)
+
+  for i, file in ipairs(filelist) do
+    local relative_path = Create_relative_path(file)
+    local shortened_path = Shorten_path(relative_path)
+    filelist[i] = shortened_path
+  end
+
   return filelist
 end
 
