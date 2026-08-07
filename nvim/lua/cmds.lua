@@ -143,13 +143,22 @@ vim.api.nvim_create_user_command("Diff", function(opts)
       end
     end,
   })
+  vim.api.nvim_create_autocmd("BufHidden", {
+    group = augroup,
+    callback = function()
+      if vim.api.nvim_get_current_win() == source_win then
+        vim.cmd.diffoff()
+      end
+    end,
+  })
   vim.api.nvim_create_autocmd("BufWipeout", {
     group = augroup,
     buffer = diff_buf,
     callback = function()
       if vim.api.nvim_win_is_valid(source_win) then
         vim.api.nvim_win_call(source_win, function()
-          vim.cmd("diffoff")
+          vim.cmd.diffoff { bang = true }
+          vim.api.nvim_del_augroup_by_id(augroup)
         end)
       end
     end,

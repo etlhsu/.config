@@ -17,29 +17,36 @@ vim.keymap.set("n", "<leader>yd", function()
   vim.fn.setreg("+", dirname)
 end)
 
+-- Yanks short path of current buffer
+vim.keymap.set("n", "<leader>ys", function()
+  local filename = vim.fn.expand("%")
+  vim.fn.setreg("+", Shorten_path(filename))
+end)
+
 -- Starts substitution command for replacing the current word
 vim.keymap.set('n', '<leader>gr', function()
   vim.api.nvim_feedkeys(':%s/' .. vim.fn.expand('<cword>') .. '/', 'n', {})
 end)
 
 -- LSP Keymaps
-vim.keymap.set('n', '<leader>ln', vim.lsp.buf.rename)
+vim.keymap.set('i', '<C-H>', vim.lsp.inline_completion.get)
+vim.keymap.set('n', '<leader>K', vim.diagnostic.open_float)
 vim.keymap.set('n', '<leader>la', vim.lsp.buf.code_action)
-vim.keymap.set('n', '<leader>lr', vim.lsp.buf.references)
-vim.keymap.set('n', '<leader>li', vim.lsp.buf.implementation)
-vim.keymap.set('n', '<leader>lt', vim.lsp.buf.type_definition)
-vim.keymap.set('n', '<leader>lo', vim.lsp.buf.document_symbol)
-vim.keymap.set('n', '<leader>lh', vim.lsp.buf.signature_help)
-vim.keymap.set('n', '<leader>lf', vim.lsp.buf.format)
 vim.keymap.set('n', '<leader>ld', vim.lsp.buf.definition)
-vim.keymap.set('n', '<leader>K', function() vim.diagnostic.open_float() end)
+vim.keymap.set('n', '<leader>lf', vim.lsp.buf.format)
+vim.keymap.set('n', '<leader>lh', vim.lsp.buf.signature_help)
+vim.keymap.set('n', '<leader>li', vim.lsp.buf.implementation)
+vim.keymap.set('n', '<leader>ln', vim.lsp.buf.rename)
+vim.keymap.set('n', '<leader>lo', vim.lsp.buf.document_symbol)
+vim.keymap.set('n', '<leader>lr', vim.lsp.buf.references)
+vim.keymap.set('n', '<leader>lt', vim.lsp.buf.type_definition)
 
 -- Abbreviations
 vim.keymap.set('ia', 'binb', '#!/bin/bash')
 vim.keymap.set('ia', 'uenv', '#!/usr/bin/env')
-vim.keymap.set('ia', 'ktci', 'kotlinx.coroutines')
-vim.keymap.set('ia', 'moci', 'org.mockito.kotlin.')
-vim.keymap.set('ia', 'comi', 'androidx.compose.')
+vim.keymap.set('ia', 'ktci', 'import kotlinx.coroutines')
+vim.keymap.set('ia', 'moci', 'import org.mockito.kotlin.')
+vim.keymap.set('ia', 'comi', 'import androidx.compose.')
 
 vim.keymap.set('n', '<leader>bb', function() vim.api.nvim_feedkeys(':b ', 'n', false) end)
 Set_complete_file_keymap('<leader>bf', 'Eb', Get_open_files, {})

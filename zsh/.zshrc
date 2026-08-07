@@ -8,7 +8,7 @@ export PATH="$HOME/.config/bin:$PATH"
 bindkey -M viins '^?' backward-delete-char
 bindkey -M viins '^H' backward-delete-char
 
-alias jjae="jj abandon 'empty() & description(exact:\"\") ~ merges()"
+alias jjae="jj abandon 'empty() & description(exact:\"\") ~ merges()'"
 
 zle-keymap-select() {
   if [[ ${KEYMAP} == vicmd ]] ||

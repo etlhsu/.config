@@ -1,3 +1,26 @@
+local expansion_keywords = { '~' }
+local expansion_keywords_map = {}
+for _, expansion_keyword in pairs(expansion_keywords) do
+  expansion_keywords_map[expansion_keyword] = vim.fn.expand(expansion_keyword)
+end
+function Shorten_path(path)
+  for expansion_keyword, expansion_keyword_value in pairs(expansion_keywords_map) do
+    local start_index, end_index = path:find(expansion_keyword_value, 1, true)
+    if start_index ~= nil and end_index ~= nil then
+      path = path:sub(1, start_index - 1) .. expansion_keyword .. path:sub(end_index + 1, -1)
+    end
+  end
+  return path
+end
+
+function Create_relative_path(absolute_path)
+  local cwd = vim.fn.getcwd() .. "/"
+  if absolute_path:sub(1, #cwd) == cwd then
+    return absolute_path:sub(#cwd + 1)
+  end
+  return absolute_path
+end
+
 function Get_open_files()
   local bufnrs = vim.tbl_filter(function(b)
     return 1 == vim.fn.buflisted(b)
@@ -15,7 +38,9 @@ function Get_open_files()
 
     if ft == "netrw" or bt ~= "" then
     else
-      table.insert(filelist, file)
+      local relative_path = Create_relative_path(file)
+      local shortened_path = Shorten_path(relative_path)
+      table.insert(filelist, shortened_path)
     end
   end
   return filelist
@@ -50,8 +75,9 @@ function Get_jj_files(rev)
       else
         file_path = string.sub(line, 3)
       end
+      local short_path = Shorten_path(file_path)
 
-      table.insert(files, file_path)
+      table.insert(files, short_path)
     end
   end
 
@@ -59,19 +85,11 @@ function Get_jj_files(rev)
   return files
 end
 
-function Create_relative_path(absolute_path)
-  local cwd = vim.fn.getcwd() .. "/"
-  if absolute_path:sub(1, #cwd) == cwd then
-    return absolute_path:sub(#cwd + 1)
-  end
-  return absolute_path
-end
-
 function Get_oldfiles(check_files)
   local oldfiles = {}
   for _, file in ipairs(vim.v.oldfiles) do
     if not check_files or vim.fn.filereadable(file) == 1 then
-      table.insert(oldfiles, Create_relative_path(file))
+      table.insert(oldfiles, file)
     end
   end
   if check_files then
@@ -81,6 +99,12 @@ function Get_oldfiles(check_files)
 
       return time_a > time_b
     end)
+  end
+
+  for i, file in ipairs(oldfiles) do
+    local relative_path = Create_relative_path(file)
+    local shortened_path = Shorten_path(relative_path)
+    oldfiles[i] = shortened_path
   end
   return oldfiles
 end
@@ -233,16 +257,27 @@ function Set_complete_file_keymap(lhs, cmd, create_candidates, opts)
     local input = opts.args
 
     -- Set the file to be the first matching candidate
-    local file = input
+    local file = nil
     for _, candidate in ipairs(candidates[cmd]) do
-      if string.find(candidate:lower(), input:lower()) ~= nil then
+      if candidate == input then
         file = candidate
         break
       end
     end
 
+    if file == nil then
+      for _, candidate in ipairs(candidates[cmd]) do
+        if string.find(candidate:lower(), input:lower()) ~= nil then
+          file = candidate
+          break
+        end
+      end
+    else
+      file = input
+    end
+
     if select_cmd == nil then
-      vim.cmd('edit ' .. file)
+      vim.cmd('edit ' .. vim.fn.expand(file))
     else
       select_cmd(file)
     end
