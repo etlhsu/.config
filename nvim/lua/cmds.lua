@@ -202,6 +202,7 @@ vim.api.nvim_create_user_command('Messages', function()
   vim.bo[buf].bufhidden = "hide"
   vim.bo[buf].modifiable = false
   vim.bo[buf].readonly = true
+  vim.bo[buf].filetype = "log"
 end, {})
 
 vim.api.nvim_create_user_command('Cdiagnostic', function()

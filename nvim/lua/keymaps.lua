@@ -49,6 +49,7 @@ vim.keymap.set('ia', 'moci', 'import org.mockito.kotlin.')
 vim.keymap.set('ia', 'comi', 'import androidx.compose.')
 
 vim.keymap.set('n', '<leader>bb', function() vim.api.nvim_feedkeys(':b ', 'n', false) end)
+vim.keymap.set('n', '<leader>bd', function() vim.api.nvim_feedkeys(':bd ', 'n', false) end)
 Set_complete_file_keymap('<leader>bf', 'Eb', Get_open_files, {})
 Set_complete_file_keymap('<leader>jf', 'Ej', function() return Get_jj_file_list('@') end, {})
 Set_complete_file_keymap('<leader>of', 'Eo', function() return Get_oldfiles(true) end, {})
