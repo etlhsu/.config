@@ -85,3 +85,11 @@ vim.api.nvim_create_autocmd({ 'BufEnter' }, {
     end
   end,
 })
+
+vim.api.nvim_create_autocmd({ 'BufNewFile', 'BufRead' }, {
+  pattern = { '*.log' },
+  group = vim.api.nvim_create_augroup('filetypedetect', {}),
+  callback = function()
+    vim.o.filetype = 'log'
+  end,
+})
